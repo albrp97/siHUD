@@ -34,7 +34,9 @@ current_time = datetime.datetime.now()
 currentAnio = current_time.year
 currentMes = current_time.month
 
-mes=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
+mes = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+       "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+
 
 def createDict(anio=currentAnio, mes=currentMes):
     targetDict = {
@@ -70,6 +72,7 @@ def createDict(anio=currentAnio, mes=currentMes):
     }
     return targetDict
 
+
 def calculateVariables(originDict):
     # total incomes
     originDict["income"] = sum(originDict["histIncome"])
@@ -79,31 +82,39 @@ def calculateVariables(originDict):
     # spent on vivir
     originDict["vivir"] = sum(originDict["histVivir"])
     # expected vivir this month
-    originDict["expectedVivir"] = originDict["income"] * originDict["ratioVivir"]
+    originDict["expectedVivir"] = originDict["income"] * \
+        originDict["ratioVivir"]
     # remaining gastar this month
-    originDict["remainingVivir"] = originDict["expectedVivir"] - originDict["vivir"]
+    originDict["remainingVivir"] = originDict["expectedVivir"] - \
+        originDict["vivir"]
 
     # spent on gastar
     originDict["gastar"] = sum(originDict["histGastar"])
     # expected gastar this month
 
-    originDict["expectedGastar"] = originDict["income"] * originDict["ratioGastar"] + originDict["extras"]
+    originDict["expectedGastar"] = originDict["income"] * \
+        originDict["ratioGastar"] + originDict["extras"]
     # remaining gastar this month
-    originDict["remainingGastar"] = originDict["expectedGastar"] - originDict["gastar"]
+    originDict["remainingGastar"] = originDict["expectedGastar"] - \
+        originDict["gastar"]
     # acomulated gastar in this month
     if originDict["remainingVivir"] > 0:
-        originDict["acomulatedGastar"] = originDict["remainingGastar"] + originDict["remainingVivir"] * originDict["ratioGastar"] * 2
+        originDict["acomulatedGastar"] = originDict["remainingGastar"] + \
+            originDict["remainingVivir"] * originDict["ratioGastar"] * 2
     else:
-        originDict["acomulatedGastar"] = originDict["remainingGastar"] + originDict["remainingVivir"]
+        originDict["acomulatedGastar"] = originDict["remainingGastar"] + \
+            originDict["remainingVivir"]
 
     # expected save this month
     originDict["expectedSave"] = originDict["income"] * originDict["ratioSave"]
     # real saves this month
     if originDict["remainingVivir"] > 0:
-        originDict["save"] = originDict["expectedSave"] + originDict["remainingVivir"] * originDict["ratioSave"] * 2
+        originDict["save"] = originDict["expectedSave"] + \
+            originDict["remainingVivir"] * originDict["ratioSave"] * 2
     else:
         originDict["save"] = originDict["expectedSave"]
     originDict["save"] += sum(originDict["extraSaves"])
+
 
 def calculateOffsets(originDict):
     offsetGastar = 0
@@ -123,9 +134,11 @@ def calculateOffsets(originDict):
     originDict["offsetGastar"] = offsetGastar
     originDict["offsetSave"] = offsetSave
 
+
 def cargarMes(anio, mes):
     f = open(f'files/track/{anio}_{mes}.json', "r")
     return json.loads(f.read())
+
 
 def crearMes(anio, mes):
     allJsons = os.listdir("files/track")
@@ -134,6 +147,7 @@ def crearMes(anio, mes):
         calculateVariables(outDict)
         calculateOffsets(outDict)
         print(outDict)
+
 
 try:
     mainDict = cargarMes(currentAnio, currentMes)
@@ -167,34 +181,40 @@ while running:
                 resalto = 1
                 colorFondoTitulo = negro
                 colorTitulo = blanco
-            pygame.draw.rect(screen, colorRecuadro, pygame.Rect(20, 20, 175, 100), resalto, border_radius=6)
-            pygame.draw.rect(screen, colorFondoTitulo, pygame.Rect(25, 8, (12 * 6) + 10, 24), border_radius=3)
+            pygame.draw.rect(screen, colorRecuadro, pygame.Rect(
+                20, 20, 175, 100), resalto, border_radius=6)
+            pygame.draw.rect(screen, colorFondoTitulo, pygame.Rect(
+                25, 8, (12 * 6) + 10, 24), border_radius=3)
             label = myfont.render("income", True, colorTitulo)
             screen.blit(label, (30, 5))
             myfont = pygame.font.Font(font, 24)
             label = myfont.render(str(mainDict["income"]), True, colorRecuadro)
-            screen.blit(label, (65, 35))
-            label = myfont.render(str(mainDict["extras"]), True, amarillo)
-            screen.blit(label, (75, 70))
+            screen.blit(label, (65, 40))
             myfont = pygame.font.Font(font, 20)
+            label = myfont.render(str(mainDict["extras"]), True, amarillo)
+            screen.blit(label, (80, 75))
+            pygame.draw.line(screen, blanco, [50, 72], [165, 72], 1)
 
             # Date
-
             colorRecuadro = violetaclaro
             resalto = 3
             colorFondoTitulo = violetaclaro
             colorTitulo = negro
 
-            pygame.draw.rect(screen, colorRecuadro, pygame.Rect(212.5, 20, 175, 100), resalto, border_radius=6)
-            pygame.draw.rect(screen, colorFondoTitulo, pygame.Rect(217.5, 8, (12 * 4) + 10, 24), border_radius=3)
+            pygame.draw.rect(screen, colorRecuadro, pygame.Rect(
+                212.5, 20, 175, 100), resalto, border_radius=6)
+            pygame.draw.rect(screen, colorFondoTitulo, pygame.Rect(
+                217.5, 8, (12 * 4) + 10, 24), border_radius=3)
             label = myfont.render("date", True, colorTitulo)
             screen.blit(label, (222.5, 5))
             myfont = pygame.font.Font(font, 24)
             label = myfont.render(str(mainDict["anio"]), True, violetaclaro)
             screen.blit(label, (265, 40))
-            label = myfont.render(str(mes[mainDict["mes"]]), True, violetaclaro)
+            label = myfont.render(
+                str(mes[mainDict["mes"]]), True, violetaclaro)
             screen.blit(label, (275, 70))
             myfont = pygame.font.Font(font, 20)
+
             # Save
             if selected == "ahorros":
                 colorRecuadro = verde
@@ -206,14 +226,23 @@ while running:
                 resalto = 1
                 colorFondoTitulo = negro
                 colorTitulo = blanco
-            pygame.draw.rect(screen, colorRecuadro, pygame.Rect(405, 20, 175, 100), resalto, border_radius=6)
-            pygame.draw.rect(screen, colorFondoTitulo, pygame.Rect(410, 8, (12 * 7) + 10, 24), border_radius=3)
+            pygame.draw.rect(screen, colorRecuadro, pygame.Rect(
+                405, 20, 175, 100), resalto, border_radius=6)
+            pygame.draw.rect(screen, colorFondoTitulo, pygame.Rect(
+                410, 8, (12 * 7) + 10, 24), border_radius=3)
             label = myfont.render("ahorros", True, colorTitulo)
             screen.blit(label, (415, 5))
-            myfont = pygame.font.Font(font, 28)
-            label = myfont.render(str(round(mainDict["save"],2)), True, verde)
-            screen.blit(label, (445, 55))
+            myfont = pygame.font.Font(font, 24)
+            label = myfont.render(
+                str(round(mainDict["save"], 2)), True, colorRecuadro)
+            screen.blit(
+                label, (495-15*float(len(str(round(mainDict["save"], 2)))/2), 40))
             myfont = pygame.font.Font(font, 20)
+            label = myfont.render(
+                str(round(mainDict["offsetSave"], 2)), True, verde)
+            screen.blit(
+                label, (505-15*float(len(str(round(mainDict["offsetSave"], 2)))/2), 75))
+            pygame.draw.line(screen, blanco, [435, 72], [550, 72], 1)
 
             # Vivir
             if selected == "vivir":
@@ -226,8 +255,10 @@ while running:
                 resalto = 1
                 colorFondoTitulo = negro
                 colorTitulo = blanco
-            pygame.draw.rect(screen, colorRecuadro, pygame.Rect(20, 140, 275, 535), resalto, border_radius=6)
-            pygame.draw.rect(screen, colorFondoTitulo, pygame.Rect(25, 128, (12 * 5) + 10, 24), border_radius=3)
+            pygame.draw.rect(screen, colorRecuadro, pygame.Rect(
+                20, 140, 275, 535), resalto, border_radius=6)
+            pygame.draw.rect(screen, colorFondoTitulo, pygame.Rect(
+                25, 128, (12 * 5) + 10, 24), border_radius=3)
             label = myfont.render("vivir", True, colorTitulo)
             screen.blit(label, (30, 125))
             myfont = pygame.font.Font(font, 24)
@@ -235,27 +266,31 @@ while running:
             screen.blit(label, (150, 170))
             label = myfont.render(str(mainDict["vivir"]), True, colorRecuadro)
             screen.blit(label, (150-(-3+15*len(str(mainDict["vivir"]))), 170))
-            label = myfont.render(str(round(mainDict["expectedVivir"],2)), True, blanco)
+            label = myfont.render(
+                str(round(mainDict["expectedVivir"], 2)), True, blanco)
             screen.blit(label, (165, 170))
             myfont = pygame.font.Font(font, 20)
-            if mainDict["remainingVivir"]>100:
-                colorRemaining=verde
+            if mainDict["remainingVivir"] > 100:
+                colorRemaining = verde
             elif mainDict["remainingVivir"] > 0:
                 colorRemaining = naranja
             else:
-                colorRemaining=rojo
-            label = myfont.render(str(round(mainDict["remainingVivir"],2)), True, colorRemaining)
-            screen.blit(label, (165-15*float(len(str(round(mainDict["remainingVivir"],2)))/2), 200))
+                colorRemaining = rojo
+            label = myfont.render(
+                str(round(mainDict["remainingVivir"], 2)), True, colorRemaining)
+            screen.blit(
+                label, (165-15*float(len(str(round(mainDict["remainingVivir"], 2)))/2), 200))
             pygame.draw.line(screen, blanco, [60, 230], [260, 230], 1)
-            vivirHist=list(reversed(mainDict["histVivir"].copy()))
+            vivirHist = list(reversed(mainDict["histVivir"].copy()))
             # So hist doesnt overflow
-            if len(vivirHist)>11:
-                vivirHist=vivirHist[:11]
+            if len(vivirHist) > 11:
+                vivirHist = vivirHist[:11]
                 vivirHist.append("...")
             # print hist
             for i in range(len(vivirHist)):
-                label=myfont.render(str(vivirHist[i]), True, blanco)
-                screen.blit(label, (165-15*float(len(str(vivirHist[i]))/2), 250+i*35))
+                label = myfont.render(str(vivirHist[i]), True, blanco)
+                screen.blit(
+                    label, (165-15*float(len(str(vivirHist[i]))/2), 250+i*35))
 
             # Gastar
             if selected == "gastar":
@@ -268,10 +303,47 @@ while running:
                 resalto = 1
                 colorFondoTitulo = negro
                 colorTitulo = blanco
-            pygame.draw.rect(screen, colorRecuadro, pygame.Rect(305, 140, 275, 535), resalto, border_radius=6)
-            pygame.draw.rect(screen, colorFondoTitulo, pygame.Rect(310, 128, (12 * 6) + 10, 24), border_radius=3)
+            pygame.draw.rect(screen, colorRecuadro, pygame.Rect(
+                305, 140, 275, 535), resalto, border_radius=6)
+            pygame.draw.rect(screen, colorFondoTitulo, pygame.Rect(
+                310, 128, (12 * 6) + 10, 24), border_radius=3)
             label = myfont.render("gastar", True, colorTitulo)
             screen.blit(label, (315, 125))
+            myfont = pygame.font.Font(font, 24)
+            label = myfont.render("/", True, blanco)
+            screen.blit(label, (440, 170))
+            label = myfont.render(str(mainDict["gastar"]), True, colorRecuadro)
+            screen.blit(label, (440-(-3+15*len(str(mainDict["gastar"]))), 170))
+            label = myfont.render(
+                str(round(mainDict["expectedGastar"], 2)), True, blanco)
+            screen.blit(label, (455, 170))
+            pygame.draw.line(screen, blanco, [345, 230], [545, 230], 1)
+            myfont = pygame.font.Font(font, 20)
+            if mainDict["remainingGastar"] > 100:
+                colorRemaining = verde
+            elif mainDict["remainingGastar"] > 0:
+                colorRemaining = naranja
+            else:
+                colorRemaining = rojo
+            label = myfont.render(
+                str(round(mainDict["remainingGastar"], 2)), True, colorRemaining)
+            screen.blit(label, (345+20, 200))
+            label = myfont.render(
+                str(round(mainDict["offsetGastar"], 2)), True, verde)
+            screen.blit(
+                label, (545-30-20*float(len(str(mainDict["offsetGastar"]))/2), 200))
+            label = myfont.render("|", True, blanco)
+            screen.blit(label, (440, 200))
+            vivirHist = list(reversed(mainDict["histGastar"].copy()))
+            # So hist doesnt overflow
+            if len(vivirHist) > 11:
+                vivirHist = vivirHist[:11]
+                vivirHist.append("...")
+            # print hist
+            for i in range(len(vivirHist)):
+                label = myfont.render(str(vivirHist[i]), True, blanco)
+                screen.blit(
+                    label, (455-15*float(len(str(vivirHist[i]))/2), 250+i*35))
 
             # Consola
             pygame.draw.rect(screen, azul, pygame.Rect(0, 695, 300, 25))
@@ -279,6 +351,7 @@ while running:
             pygame.display.update()
             pintar = False
         if event.type == pygame.KEYDOWN:
+            # TODO make funtionality
             if pygame.key.name(event.key) == "i":
                 selected = "income"
                 number = ""
@@ -299,6 +372,8 @@ while running:
                 selected = ""
                 number = ""
                 pintar = True
+            elif pygame.key.name(event.key) == "q":
+                running = False
             elif pygame.key.name(event.key) == "backspace":
                 number = number[:-1]
                 pintar = True
@@ -310,7 +385,5 @@ while running:
             else:
                 number += pygame.key.name(event.key)
                 pintar = True
-            # print(pygame.key.name(event.key))
-            # pygame.display.update()
         elif event.type == pygame.QUIT:
             running = False
